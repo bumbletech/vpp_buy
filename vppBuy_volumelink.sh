@@ -4,6 +4,7 @@
 # Put in the apple id and password below.
 # TEST TEST TEST - This was used with Google Chrome back in March 2015. Tab counts and fields may have changed!
 # A log is produced and a screen shot of the purchase screen is captured. 
+# this version changes your app urls to "volume.itunes.apple.com" -- saves a few seconds per app
 
 # Go buy (Free?) VPP apps - May work with paid
 
@@ -23,6 +24,12 @@ LOGFILE=VPPbuy.log
 
 while read line
 do
+
+#injects volume url to app link
+volumestring="volume.itunes.apple.com"
+volume_url="${line/itunes.apple.com/$volumestring}"
+
+
 # open google chrome
 open /Applications/Google\ Chrome.app 
 sleep 1;
@@ -31,30 +38,12 @@ sleep 1;
 osascript -e 'tell application "System Events" to keystroke "l" using command down'
 text='https://volume.itunes.apple.com/us/store'
 osascript <<EOF
-tell application "System Events" to keystroke "$text"
+tell application "System Events" to keystroke "$volume_url"
 EOF
 osascript -e 'tell application "System Events" to keystroke return';
-sleep 2;
-# Tab * 13
-COUNTER=0
-TABS=13
-         while [  $COUNTER -lt $TABS ]; do
-			osascript -e 'tell application "System Events" to keystroke tab';
-			osascript -e 'tell application "System Events" to delay 0.2';
-            let COUNTER=COUNTER+1 
-         done
+sleep 3;
 
-sleep 2;
-
-# Read the App URL from file
-osascript <<EOF
-tell application "System Events" to keystroke "$line"
-EOF
-#Enter
-osascript -e 'tell application "System Events" to keystroke return';
-sleep 2;
-
-#Tab * 17
+#Tab * 16
 COUNTER=0
 TABS=17
          while [  $COUNTER -lt $TABS ]; do
@@ -63,8 +52,9 @@ TABS=17
             let COUNTER=COUNTER+1 
          done
 sleep 1;
-#25000
-text='25000'
+#25
+#the number of apps you want to get
+text='100'
 osascript <<EOF
 tell application "System Events" to keystroke "$text"
 EOF
@@ -76,9 +66,9 @@ osascript -e 'tell application "System Events" to keystroke tab';
 #Enter
 osascript -e 'tell application "System Events" to keystroke return';
 sleep 2;
-#Tab * 18
+#Tab * 17
 COUNTER=0
-TABS=18
+TABS=2
          while [  $COUNTER -lt $TABS ]; do
 			osascript -e 'tell application "System Events" to keystroke tab';
 			osascript -e 'tell application "System Events" to delay 0.2';
@@ -88,7 +78,7 @@ TABS=18
 osascript -e 'tell application "System Events" to keystroke return';
 sleep 2;
 #Apple ID )
-text='Apple ID goes here'
+text=yourappleid@companyschool.org
 osascript <<EOF
 tell application "System Events" to keystroke "$text"
 EOF
@@ -96,7 +86,7 @@ EOF
 osascript -e 'tell application "System Events" to keystroke tab';
 
 #Password 
-text='yourvpppasswordhere'
+text=yourpassword
 osascript <<EOF
 tell application "System Events" to keystroke "$text"
 EOF
@@ -105,8 +95,8 @@ osascript -e 'tell application "System Events" to keystroke return';
 sleep 2;
 # Logging
 /usr/sbin/screencapture `date '+%H-%M-%S'`.png
-/bin/echo "$line" > `date '+%H-%M-%S'`.txt
-/bin/date "+%Y-%m-%d %H:%M:%S: $line purchased." >> $LOGFILE
-sleep 1;
+/bin/echo "$volume_url" > `date '+%H-%M-%S'`.txt
+/bin/date "+%Y-%m-%d %H:%M:%S: $volume_url purchased." >> $LOGFILE
+sleep 3;
 
 done < appurlsvppbuy.txt
